@@ -13,10 +13,11 @@ import {
   SafeAreaView,
   StatusBar,
   useColorScheme,
-  ScrollView,
+  FlatList,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Card from './src/components/Card';
+import SearchBar from './src/components/SearchBar';
 // import {
 //   SharedElement,
 //   SharedElementTransition,
@@ -47,7 +48,25 @@ const App = () => {
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        data={results}
+        keyExtractor={result => result.id.attributes['im:id']}
+        renderItem={({ item }) => {
+          return (
+            <Card
+              imgUri={item['im:image'][2].label}
+              artist={item['im:artist'].label}
+              title={item.title.label}
+              price={item['im:price'].label}
+              stock={item['im:itemCount'].label}
+            />
+          );
+        }}
+        ListHeaderComponent={<SearchBar />}
+        stickyHeaderIndices={[0]}
+      />
+      {/* <ScrollView showsVerticalScrollIndicator={false}>
         {results.map((result, index) => {
           return (
             <Card
@@ -60,7 +79,7 @@ const App = () => {
             />
           );
         })}
-      </ScrollView>
+      </ScrollView> */}
       {/* <View ref={ref => (startAncestor = nodeFromRef(ref))}>
         <SharedElement onNode={node => (startNode = node)}>
           <Image
