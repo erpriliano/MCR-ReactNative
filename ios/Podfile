@@ -12,6 +12,8 @@ target 'MCRRN' do
     :hermes_enabled => false
   )
 
+  pod 'RNSharedElement', :path => '../node_modules/react-native-shared-element'
+
   target 'MCRRNTests' do
     inherit! :complete
     # Pods for testing
