@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import { View, Image, Text, StyleSheet, Pressable } from 'react-native';
+import { SharedElement } from 'react-navigation-shared-element';
 
 interface CardProps {
+  onPress: () => void;
+  id: string;
   imgUri: string;
   artist: string;
   title: string;
@@ -49,31 +52,43 @@ const styles = StyleSheet.create({
   },
 });
 
-const Card: React.FC<CardProps> = ({ imgUri, artist, title, price, stock }) => {
+const Card: React.FC<CardProps> = ({
+  onPress,
+  id,
+  imgUri,
+  artist,
+  title,
+  price,
+  stock,
+}) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.cardWrapper}>
-        <Image
-          resizeMode="cover"
-          source={{
-            uri: imgUri,
-          }}
-          style={styles.image}
-        />
-        <View style={styles.content}>
-          <Text numberOfLines={2} style={styles.text1}>
-            {artist}
-          </Text>
-          <Text numberOfLines={1} style={styles.text2}>
-            {title}
-          </Text>
-          <View style={styles.subDetail}>
-            <Text style={styles.text3}>{price}</Text>
-            <Text style={styles.text3}>Stock: {stock}</Text>
+    <Pressable onPress={onPress}>
+      <View style={styles.container}>
+        <View style={styles.cardWrapper}>
+          <SharedElement id={id}>
+            <Image
+              resizeMode="cover"
+              source={{
+                uri: imgUri,
+              }}
+              style={styles.image}
+            />
+          </SharedElement>
+          <View style={styles.content}>
+            <Text numberOfLines={2} style={styles.text1}>
+              {artist}
+            </Text>
+            <Text numberOfLines={1} style={styles.text2}>
+              {title}
+            </Text>
+            <View style={styles.subDetail}>
+              <Text style={styles.text3}>{price}</Text>
+              <Text style={styles.text3}>Stock: {stock}</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

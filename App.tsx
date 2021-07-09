@@ -8,112 +8,35 @@
  * @format
  */
 
-import React, { useState, useEffect } from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  useColorScheme,
-  FlatList,
-} from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import Card from './src/components/Card';
-import SearchBar from './src/components/SearchBar';
-// import {
-//   SharedElement,
-//   SharedElementTransition,
-//   nodeFromRef,
-// } from 'react-native-shared-element';
+import React from 'react';
+import { enableScreens } from 'react-native-screens';
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import ListScreen from './src/screens/ListScreen';
+import DetailScreen from './src/screens/DetailScreen';
+import { RootStackParamList } from './src/types/NavigatorType';
+enableScreens();
+
+const Stack = createSharedElementStackNavigator<RootStackParamList>();
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-  const [results, setResults] = useState<any[]>([]);
-
-  useEffect(() => {
-    fetch('https://itunes.apple.com/us/rss/topalbums/limit=200/json')
-      .then(response => response.json())
-      .then(response => setResults(response.feed.entry))
-      .catch(err => console.log(err));
-  }, []);
-
-  // let startAncestor = null;
-  // let startNode = null;
-  // let endAncestor = null;
-  // let endNode = null;
-
-  // const position = new Animated.Value(0);
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={results}
-        keyExtractor={result => result.id.attributes['im:id']}
-        renderItem={({ item }) => {
-          return (
-            <Card
-              imgUri={item['im:image'][2].label}
-              artist={item['im:artist'].label}
-              title={item.title.label}
-              price={item['im:price'].label}
-              stock={item['im:itemCount'].label}
-            />
-          );
-        }}
-        ListHeaderComponent={<SearchBar />}
-        stickyHeaderIndices={[0]}
-      />
-      {/* <ScrollView showsVerticalScrollIndicator={false}>
-        {results.map((result, index) => {
-          return (
-            <Card
-              key={index}
-              imgUri={result['im:image'][2].label}
-              artist={result['im:artist'].label}
-              title={result.title.label}
-              price={result['im:price'].label}
-              stock={result['im:itemCount'].label}
-            />
-          );
-        })}
-      </ScrollView> */}
-      {/* <View ref={ref => (startAncestor = nodeFromRef(ref))}>
-        <SharedElement onNode={node => (startNode = node)}>
-          <Image
-            style={{ height: 250, width: 250 }}
-            source={{
-              uri: 'https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7c/91/d3/7c91d3c6-2591-1b94-1f52-46b9e2f39c80/21BMR0002592.rgb.jpg/55x55bb.png',
-            }}
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="List"
+          mode="modal"
+          screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="List" component={ListScreen} />
+          <Stack.Screen
+            name="Detail"
+            component={DetailScreen}
+            options={({ route }) => ({ data: route.params.entry })}
           />
-        </SharedElement>
-        <Text>Yaaa</Text>
-        <Text>Apa boleh buat</Text>
-      </View>
-      <View ref={ref => (endAncestor = nodeFromRef(ref))}>
-        <SharedElement onNode={node => (endNode = node)}>
-          <Image
-            style={{ height: 250, width: 250 }}
-            source={{
-              uri: 'https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7c/91/d3/7c91d3c6-2591-1b94-1f52-46b9e2f39c80/21BMR0002592.rgb.jpg/55x55bb.png',
-            }}
-          />
-        </SharedElement>
-        <Text>Coba dulu</Text>
-      </View>
-      <View style={StyleSheet.absoluteFill}>
-        <SharedElementTransition
-          start={{ node: startNode, ancestor: startAncestor }}
-          end={{ node: endNode, ancestor: endAncestor }}
-          position={position}
-          animation="move"
-          resize="auto"
-          align="auto"
-        />
-      </View> */}
-    </SafeAreaView>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 
