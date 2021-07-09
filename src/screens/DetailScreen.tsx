@@ -5,13 +5,14 @@ import {
   Image,
   ScrollView,
   Linking,
-  TouchableWithoutFeedback,
+  StyleSheet,
 } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/NavigatorType';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Button from '../components/Button';
 
 type DetailRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
@@ -22,121 +23,116 @@ type DetailScreenProps = {
   navigation: DetailNavigationProp;
 };
 
-const DetailScreen: React.FC<DetailScreenProps> = ({ route, navigation }) => {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  image: {
+    height: 320,
+  },
+  icon: {
+    marginRight: 7,
+  },
+  contentWrapper: {
+    flex: 1,
+    paddingHorizontal: 18,
+  },
+  text1: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  text2: {
+    fontSize: 18,
+  },
+  labelText: {
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  horizontalWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  horizontalSpaceWrapper: {
+    flexDirection: 'row',
+    marginTop: 5,
+    marginBottom: 10,
+    justifyContent: 'space-between',
+  },
+  labelWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 25,
+    marginBottom: 10,
+    justifyContent: 'center',
+  },
+});
+
+const ICON_SIZE = 24;
+
+const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
   const { entry } = route.params;
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <SharedElement id={entry.id.attributes['im:id']}>
           <Image
             resizeMode="contain"
             source={{ uri: entry['im:image'][2].label }}
-            style={{ height: 320 }}
+            style={styles.image}
           />
         </SharedElement>
 
-        <View style={{ marginVertical: 15 }}>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              Linking.openURL(entry.link.attributes.href);
-            }}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                marginTop: 10,
-                padding: 5,
-                marginHorizontal: 25,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#1dcb34',
-                borderRadius: 5,
-              }}>
-              <MaterialIcons
-                name="play-arrow"
-                size={24}
-                color="white"
-                style={{ marginRight: 7 }}
-              />
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: 'white',
-                  letterSpacing: 0.5,
-                }}>
-                Preview
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
+        <Button
+          title="Preview"
+          onPress={() => {
+            Linking.openURL(entry.link.attributes.href);
+          }}>
+          <MaterialIcons
+            name="play-arrow"
+            size={ICON_SIZE}
+            color="white"
+            style={styles.icon}
+          />
+        </Button>
 
-        <View style={{ flex: 1, paddingHorizontal: 18 }}>
-          <Text style={{ fontSize: 22, fontWeight: 'bold' }}>
-            {entry['im:artist'].label}
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: 5,
-            }}>
-            <MaterialIcons name="event" size={20} style={{ marginRight: 5 }} />
-            <Text style={{ fontSize: 18 }}>
+        <View style={styles.contentWrapper}>
+          <Text style={styles.text1}>{entry['im:artist'].label}</Text>
+          <View style={styles.horizontalWrapper}>
+            <MaterialIcons name="event" size={ICON_SIZE} style={styles.icon} />
+            <Text style={styles.text2}>
               {entry['im:releaseDate'].attributes.label}
             </Text>
           </View>
-          <Text style={{ fontSize: 18, marginTop: 5 }}>
-            {entry.title.label}
-          </Text>
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <MaterialIcons name="album" size={20} style={{ marginRight: 5 }} />
-            <Text style={{ fontSize: 18 }}>
-              {entry.category.attributes.label}
-            </Text>
+          <Text style={styles.text2}>{entry.title.label}</Text>
+          <View style={styles.horizontalWrapper}>
+            <MaterialIcons name="album" size={ICON_SIZE} style={styles.icon} />
+            <Text style={styles.text2}>{entry.category.attributes.label}</Text>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 10,
-              justifyContent: 'space-between',
-            }}>
+          <View style={styles.horizontalSpaceWrapper}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <MaterialIcons
                 name="local-offer"
-                size={20}
-                style={{ marginRight: 5 }}
+                size={ICON_SIZE}
+                style={styles.icon}
               />
-              <Text style={{ fontSize: 18 }}>{entry['im:price'].label}</Text>
+              <Text style={styles.text2}>{entry['im:price'].label}</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <MaterialIcons
                 name="inventory"
-                size={20}
-                style={{ marginRight: 5 }}
+                size={ICON_SIZE}
+                style={styles.icon}
               />
-              <Text style={{ fontSize: 18 }}>
+              <Text style={styles.text2}>
                 {entry['im:itemCount'].label} aval.
               </Text>
             </View>
           </View>
 
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              marginTop: 25,
-              marginBottom: 10,
-              justifyContent: 'center',
-            }}>
-            <Text style={{ textAlign: 'center', fontSize: 16 }}>
-              {entry.rights.label}
-            </Text>
+          <View style={styles.labelWrapper}>
+            <Text style={styles.labelText}>{entry.rights.label}</Text>
           </View>
         </View>
       </View>

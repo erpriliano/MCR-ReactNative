@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   cardWrapper: {
-    backgroundColor: '#e3e3e3',
+    backgroundColor: 'white',
     borderRadius: 10,
     overflow: 'hidden',
     elevation: 20,

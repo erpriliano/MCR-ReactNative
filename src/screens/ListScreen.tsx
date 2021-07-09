@@ -16,7 +16,7 @@ type ListScreenProps = {
   navigation: ListNavigationProp;
 };
 
-const ListScreen: React.FC<ListScreenProps> = ({ route, navigation }) => {
+const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
   const [results, setResults] = useState<Entry[]>([]);
 
   useEffect(() => {
