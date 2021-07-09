@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
-interface ButtonProps {
+interface IconButtonProps {
   onPress: () => void;
   title: string;
+  children?: JSX.Element;
 }
 
 const styles = StyleSheet.create({
@@ -28,11 +29,16 @@ const styles = StyleSheet.create({
   },
 });
 
-const Button: React.FC<ButtonProps> = ({ onPress, title }) => {
+const IconButton: React.FC<IconButtonProps> = ({
+  onPress,
+  title,
+  children,
+}) => {
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.buttonWrapper}>
+          {children}
           <Text style={styles.title}>{title}</Text>
         </View>
       </TouchableWithoutFeedback>
@@ -40,4 +46,4 @@ const Button: React.FC<ButtonProps> = ({ onPress, title }) => {
   );
 };
 
-export default Button;
+export default IconButton;

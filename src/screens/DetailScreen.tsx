@@ -12,7 +12,7 @@ import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/NavigatorType';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Button from '../components/Button';
+import IconButton from '../components/IconButton';
 
 type DetailRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     justifyContent: 'center',
   },
+  textIconWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
 
 const ICON_SIZE = 24;
@@ -83,7 +87,7 @@ const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
           />
         </SharedElement>
 
-        <Button
+        <IconButton
           title="Preview"
           onPress={() => {
             Linking.openURL(entry.link.attributes.href);
@@ -94,7 +98,7 @@ const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
             color="white"
             style={styles.icon}
           />
-        </Button>
+        </IconButton>
 
         <View style={styles.contentWrapper}>
           <Text style={styles.text1}>{entry['im:artist'].label}</Text>
@@ -111,7 +115,7 @@ const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
           </View>
 
           <View style={styles.horizontalSpaceWrapper}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.textIconWrapper}>
               <MaterialIcons
                 name="local-offer"
                 size={ICON_SIZE}
@@ -119,7 +123,7 @@ const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
               />
               <Text style={styles.text2}>{entry['im:price'].label}</Text>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.textIconWrapper}>
               <MaterialIcons
                 name="inventory"
                 size={ICON_SIZE}
