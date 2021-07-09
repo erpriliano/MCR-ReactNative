@@ -32,7 +32,10 @@ const App = () => {
           <Stack.Screen
             name="Detail"
             component={DetailScreen}
-            options={() => ({ headerShown: true })}
+            options={({ route }) => ({
+              headerShown: true,
+              title: route.params.entry.title.label,
+            })}
           />
         </Stack.Navigator>
       </NavigationContainer>
