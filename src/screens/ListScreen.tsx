@@ -20,7 +20,7 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
   const [results, setResults] = useState<Entry[]>([]);
 
   useEffect(() => {
-    fetch('https://itunes.apple.com/us/rss/topalbums/limit=200/json')
+    fetch('https://itunes.apple.com/us/rss/topalbums/limit=100/json')
       .then(response => response.json())
       .then(response => setResults(response.feed.entry))
       .catch(err => console.log(err));
