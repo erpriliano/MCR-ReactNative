@@ -29,15 +29,17 @@ const styles = StyleSheet.create({
 
 interface SearchBarProps {
   onPress: () => void;
+  handleTextChange: (text: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onPress }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ handleTextChange, onPress }) => {
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder="Search Artist.."
+        placeholder="Search Artist/Song/Description.."
         placeholderTextColor="grey"
         style={styles.textInput}
+        onChangeText={handleTextChange}
       />
       <TouchableWithoutFeedback onPress={onPress}>
         <MaterialIcons name="sort" size={26} style={{ marginHorizontal: 7 }} />

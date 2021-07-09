@@ -47,17 +47,17 @@ const radioButtonsData: RadioButtonProps[] = [
   {
     id: '1',
     label: 'Sort by price',
-    value: 'sortPrice',
+    value: 'im:price.attributes.amount',
   },
   {
     id: '2',
     label: 'Sort by artist',
-    value: 'sortArtist',
+    value: 'im:artist.label',
   },
   {
     id: '3',
     label: 'Sort by release date',
-    value: 'sortDate',
+    value: 'im:releaseDate.label',
   },
 ];
 
@@ -65,17 +65,23 @@ const radioButtonsSort: RadioButtonProps[] = [
   {
     id: '1',
     label: 'Ascending',
-    value: 'asc',
+    value: '-1',
   },
   {
     id: '2',
     label: 'Descending',
-    value: 'desc',
+    value: '1',
   },
 ];
 
 const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
-  const [results, setResults] = useState<Entry[]>([]);
+  const [results, setResults] = useState<{
+    allEntries: Entry[],
+    filteredEntries: Entry[],
+  }>({
+    allEntries: [],
+    filteredEntries: [],
+  });
   const [isShowModal, setIsShowModal] = useState<boolean>(false);
   const [radioButtons, setRadioButtons] =
     useState<RadioButtonProps[]>(radioButtonsData);
@@ -85,7 +91,10 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
   useEffect(() => {
     fetch('https://itunes.apple.com/us/rss/topalbums/limit=100/json')
       .then(response => response.json())
-      .then(response => setResults(response.feed.entry))
+      .then(response => setResults({
+        allEntries: response.feed.entry,
+        filteredEntries: response.feed.entry
+      }))
       .catch(err => console.log(err));
   }, []);
 
@@ -93,7 +102,7 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
     <>
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={results}
+        data={results.filteredEntries}
         keyExtractor={result => result.id.attributes['im:id']}
         renderItem={({ item }) => {
           return (
@@ -109,7 +118,38 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
           );
         }}
         ListHeaderComponent={
-          <SearchBar onPress={() => setIsShowModal(!isShowModal)} />
+          <SearchBar
+            onPress={() => setIsShowModal(!isShowModal)}
+            handleTextChange={(text) => {
+              
+              // Reset filtered entries wih all entries if no search terms exist
+              if (text.length === 0) {
+                setResults({
+                  ...results,
+                  filteredEntries: results.allEntries
+                })
+              }
+              // Might as well use debounce/throttle here.
+              const loweredCaseText = text.toLowerCase();
+              const filteredEntries = results.allEntries.filter(
+                (entry) => {
+                  return entry['im:artist'].label.toLowerCase().includes(loweredCaseText)
+                    || entry['im:contentType'].attributes.label.toLowerCase().includes(loweredCaseText)
+                    || entry['im:name'].label.toLowerCase().includes(loweredCaseText)
+                    || entry.title.label.toLowerCase().includes(loweredCaseText)
+                }
+              )
+
+              // Should set NO_RESULT state, and UI should act accordingly
+              if (filteredEntries.length === 0) {
+              }
+
+              setResults({
+                ...results,
+                filteredEntries
+              })
+            }}
+          />
         }
         stickyHeaderIndices={[0]}
       />
@@ -141,7 +181,59 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
               />
             </View>
           </View>
-          <Button onPress={() => console.log('Pressed')} title="Sort" />
+          <Button onPress={() => {
+            const selectedSort = radioButtons.find((radioButton) => radioButton.selected);
+            const selectedSortSetting = sortSettings.find(sortSetting => sortSetting.selected);
+            const notSelectedSortSetting = sortSettings.find(sortSetting => !sortSetting.selected);
+
+            if (selectedSort) {
+              const filteredEntries = results.filteredEntries.sort((a, b) => {
+                const aValue = selectedSort.value.split('.').reduce(function(p,prop) {
+                  return prop === 'amount' ? parseInt(p[prop]) : p[prop]
+                }, a);
+                const bValue = selectedSort.value.split('.').reduce(function(p,prop) {
+                  return prop === 'amount' ? parseInt(p[prop]) : p[prop]
+                }, b);
+
+
+                if (aValue < bValue) {
+                  return parseInt(selectedSortSetting?.value);
+                }
+                else if (bValue < aValue) {
+                  return parseInt(notSelectedSortSetting?.value);
+                }
+                else {
+                  return 0
+                }
+              })
+
+              const allEntries = results.allEntries.sort((a, b) => {
+                const aValue = selectedSort.value.split('.').reduce(function(p,prop) {
+                  return prop === 'amount' ? parseInt(p[prop]) : p[prop]
+                }, a);
+                const bValue = selectedSort.value.split('.').reduce(function(p,prop) {
+                  return prop === 'amount' ? parseInt(p[prop]) : p[prop]
+                }, b);
+
+                if (aValue < bValue) {
+                  return parseInt(selectedSortSetting?.value);
+                }
+                else if (bValue < aValue) {
+                  return parseInt(notSelectedSortSetting?.value);
+                }
+                else {
+                  return 0
+                }
+              })
+
+              setResults({
+                allEntries,
+                filteredEntries
+              })
+            }
+
+            setIsShowModal(false)
+          }} title="Sort" />
         </View>
       </Modal>
     </>
