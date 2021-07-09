@@ -1,4 +1,4 @@
-import { Entry } from '../screens/ListScreen';
+import { Entry } from '../types/Type';
 
 export type RootStackParamList = {
   List: undefined;

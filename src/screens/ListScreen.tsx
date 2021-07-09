@@ -3,6 +3,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/NavigatorType';
+import { Entry } from '../types/Type';
 import Card from '../components/Card';
 import SearchBar from '../components/SearchBar';
 
@@ -14,15 +15,6 @@ type ListScreenProps = {
   route: ListRouteProp;
   navigation: ListNavigationProp;
 };
-
-export interface Entry {
-  id: string;
-  imgUri: string;
-  artist: string;
-  title: string;
-  price: string;
-  stock: number;
-}
 
 const ListScreen: React.FC<ListScreenProps> = ({ route, navigation }) => {
   const [results, setResults] = useState<Entry[]>([]);
