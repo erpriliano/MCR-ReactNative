@@ -76,8 +76,8 @@ const radioButtonsSort: RadioButtonProps[] = [
 
 const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
   const [results, setResults] = useState<{
-    allEntries: Entry[],
-    filteredEntries: Entry[],
+    allEntries: Entry[];
+    filteredEntries: Entry[];
   }>({
     allEntries: [],
     filteredEntries: [],
@@ -91,10 +91,12 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
   useEffect(() => {
     fetch('https://itunes.apple.com/us/rss/topalbums/limit=100/json')
       .then(response => response.json())
-      .then(response => setResults({
-        allEntries: response.feed.entry,
-        filteredEntries: response.feed.entry
-      }))
+      .then(response =>
+        setResults({
+          allEntries: response.feed.entry,
+          filteredEntries: response.feed.entry,
+        }),
+      )
       .catch(err => console.log(err));
   }, []);
 
@@ -120,25 +122,30 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
         ListHeaderComponent={
           <SearchBar
             onPress={() => setIsShowModal(!isShowModal)}
-            handleTextChange={(text) => {
-              
+            handleTextChange={text => {
               // Reset filtered entries wih all entries if no search terms exist
               if (text.length === 0) {
                 setResults({
                   ...results,
-                  filteredEntries: results.allEntries
-                })
+                  filteredEntries: results.allEntries,
+                });
               }
               // Might as well use debounce/throttle here.
               const loweredCaseText = text.toLowerCase();
-              const filteredEntries = results.allEntries.filter(
-                (entry) => {
-                  return entry['im:artist'].label.toLowerCase().includes(loweredCaseText)
-                    || entry['im:contentType'].attributes.label.toLowerCase().includes(loweredCaseText)
-                    || entry['im:name'].label.toLowerCase().includes(loweredCaseText)
-                    || entry.title.label.toLowerCase().includes(loweredCaseText)
-                }
-              )
+              const filteredEntries = results.allEntries.filter(entry => {
+                return (
+                  entry['im:artist'].label
+                    .toLowerCase()
+                    .includes(loweredCaseText) ||
+                  entry['im:contentType'].attributes.label
+                    .toLowerCase()
+                    .includes(loweredCaseText) ||
+                  entry['im:name'].label
+                    .toLowerCase()
+                    .includes(loweredCaseText) ||
+                  entry.title.label.toLowerCase().includes(loweredCaseText)
+                );
+              });
 
               // Should set NO_RESULT state, and UI should act accordingly
               if (filteredEntries.length === 0) {
@@ -146,8 +153,8 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
 
               setResults({
                 ...results,
-                filteredEntries
-              })
+                filteredEntries,
+              });
             }}
           />
         }
@@ -181,59 +188,71 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
               />
             </View>
           </View>
-          <Button onPress={() => {
-            const selectedSort = radioButtons.find((radioButton) => radioButton.selected);
-            const selectedSortSetting = sortSettings.find(sortSetting => sortSetting.selected);
-            const notSelectedSortSetting = sortSettings.find(sortSetting => !sortSetting.selected);
+          <Button
+            onPress={() => {
+              const selectedSort = radioButtons.find(
+                radioButton => radioButton.selected,
+              );
+              const selectedSortSetting = sortSettings.find(
+                sortSetting => sortSetting.selected,
+              );
+              const notSelectedSortSetting = sortSettings.find(
+                sortSetting => !sortSetting.selected,
+              );
 
-            if (selectedSort) {
-              const filteredEntries = results.filteredEntries.sort((a, b) => {
-                const aValue = selectedSort.value.split('.').reduce(function(p,prop) {
-                  return prop === 'amount' ? parseInt(p[prop]) : p[prop]
-                }, a);
-                const bValue = selectedSort.value.split('.').reduce(function(p,prop) {
-                  return prop === 'amount' ? parseInt(p[prop]) : p[prop]
-                }, b);
+              if (selectedSort) {
+                const filteredEntries = results.filteredEntries.sort((a, b) => {
+                  const aValue = selectedSort.value
+                    .split('.')
+                    .reduce(function (p, prop) {
+                      return prop === 'amount' ? parseInt(p[prop]) : p[prop];
+                    }, a);
+                  const bValue = selectedSort.value
+                    .split('.')
+                    .reduce(function (p, prop) {
+                      return prop === 'amount' ? parseInt(p[prop]) : p[prop];
+                    }, b);
 
+                  if (aValue < bValue) {
+                    return parseInt(selectedSortSetting?.value);
+                  } else if (bValue < aValue) {
+                    return parseInt(notSelectedSortSetting?.value);
+                  } else {
+                    return 0;
+                  }
+                });
 
-                if (aValue < bValue) {
-                  return parseInt(selectedSortSetting?.value);
-                }
-                else if (bValue < aValue) {
-                  return parseInt(notSelectedSortSetting?.value);
-                }
-                else {
-                  return 0
-                }
-              })
+                const allEntries = results.allEntries.sort((a, b) => {
+                  const aValue = selectedSort.value
+                    .split('.')
+                    .reduce(function (p, prop) {
+                      return prop === 'amount' ? parseInt(p[prop]) : p[prop];
+                    }, a);
+                  const bValue = selectedSort.value
+                    .split('.')
+                    .reduce(function (p, prop) {
+                      return prop === 'amount' ? parseInt(p[prop]) : p[prop];
+                    }, b);
 
-              const allEntries = results.allEntries.sort((a, b) => {
-                const aValue = selectedSort.value.split('.').reduce(function(p,prop) {
-                  return prop === 'amount' ? parseInt(p[prop]) : p[prop]
-                }, a);
-                const bValue = selectedSort.value.split('.').reduce(function(p,prop) {
-                  return prop === 'amount' ? parseInt(p[prop]) : p[prop]
-                }, b);
+                  if (aValue < bValue) {
+                    return parseInt(selectedSortSetting?.value);
+                  } else if (bValue < aValue) {
+                    return parseInt(notSelectedSortSetting?.value);
+                  } else {
+                    return 0;
+                  }
+                });
 
-                if (aValue < bValue) {
-                  return parseInt(selectedSortSetting?.value);
-                }
-                else if (bValue < aValue) {
-                  return parseInt(notSelectedSortSetting?.value);
-                }
-                else {
-                  return 0
-                }
-              })
+                setResults({
+                  allEntries,
+                  filteredEntries,
+                });
+              }
 
-              setResults({
-                allEntries,
-                filteredEntries
-              })
-            }
-
-            setIsShowModal(false)
-          }} title="Sort" />
+              setIsShowModal(false);
+            }}
+            title="Sort"
+          />
         </View>
       </Modal>
     </>

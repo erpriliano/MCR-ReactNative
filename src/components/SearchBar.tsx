@@ -36,8 +36,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ handleTextChange, onPress }) => {
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder="Search Artist/Song/Description.."
+        placeholder="Search Artist/Song/Desc.."
         placeholderTextColor="grey"
+        allowFontScaling={true}
         style={styles.textInput}
         onChangeText={handleTextChange}
       />

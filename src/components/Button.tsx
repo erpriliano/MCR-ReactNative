@@ -11,10 +11,9 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   buttonWrapper: {
-    flex: 1,
     flexDirection: 'row',
     marginTop: 10,
-    padding: 5,
+    padding: 7,
     marginHorizontal: 25,
     justifyContent: 'center',
     alignItems: 'center',
