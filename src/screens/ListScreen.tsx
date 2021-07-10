@@ -41,6 +41,13 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
   },
+  noResultWrapper: {
+    height: 250,
+    marginVertical: 70,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 const radioButtonsData: RadioButtonProps[] = [
@@ -106,6 +113,13 @@ const ListScreen: React.FC<ListScreenProps> = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         data={results.filteredEntries}
         keyExtractor={result => result.id.attributes['im:id']}
+        ListEmptyComponent={() => {
+          return (
+            <View style={styles.noResultWrapper}>
+              <Text style={styles.text1}>No results found...</Text>
+            </View>
+          );
+        }}
         renderItem={({ item }) => {
           return (
             <Card
